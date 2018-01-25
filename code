@@ -1,0 +1,35 @@
+"""application for interactive dictionary"""
+import json
+from difflib import get_close_matches
+
+data=json.load(open("data.json"))
+
+def translate(w):
+    w=w.lower()#we convert all words to lower case so that it becomes accesible in data.json
+    if w in data:
+        return data[w]
+    elif w.upper() in data: #in case user enters words like USA or NATO
+        return data[w.upper()]
+    elif w.title() in data:#in case user enters words like TEXAS
+        return data[w.title()]
+    elif len(get_close_matches(w,data.keys(), cutoff=0.8))>0:
+        word1 = input("did you mean %s instead?? enter y for yes and n for no: " % get_close_matches(w, data.keys())[0])
+        if word1=="y"or word1=="Y":
+            return data[get_close_matches(w, data.keys())[0]]
+        elif word1=="n"or word1=="N":
+            return "this word doesn't exist .please double check!!"
+        else:
+            return "wrong input symbol!!"
+    else:
+        return "this word doesn't exist.please double check!"
+
+
+
+word=input("enter a word:")
+output=translate(word)
+
+if type(output)== list:
+    for item in output:
+        print(item)
+else:
+    print(output)
